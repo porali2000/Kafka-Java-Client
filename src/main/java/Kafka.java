@@ -1,7 +1,7 @@
 public enum Kafka {
     TfbBan("TfbBan"),
     TfbMsisdn("TfbMsisdn"),
-    Cluster("10.65.61.174:9092");
+    Cluster( "qa3.confluent-kafka1.tfb.ccp.t-mobile.com:9092");
     Kafka(String value){
         this.value = value;
     }

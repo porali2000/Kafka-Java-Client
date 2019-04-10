@@ -1,3 +1,4 @@
+import com.tmobile.b2b.experienceadapter.kafkatopics.outbound.GenericBanDetails;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -18,13 +19,18 @@ public class Messenger {
         props.put("request.timeout.ms", 1500);
         props.put("buffer.memory", 33554432);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        Producer<String, String> producer = new KafkaProducer(props);
+//        props.put("value.serializer", "BanDeserializer");
+        props.put("value.serializer", "LocalBanDeserializer");
+        Producer<String, LocalGenericBanDetails> producer = new KafkaProducer(props);
         if (null == producer) {throw new RuntimeException("Unable to create producer");}
         System.out.println("Got Producer");
 
         try {
-            Future<RecordMetadata> send = producer.send(new ProducerRecord<String, String>(Kafka.TfbBan.value, "key", "value"));
+
+            final ProducerRecord<String, LocalGenericBanDetails> record
+                    = new ProducerRecord<String, LocalGenericBanDetails>
+                    (Kafka.TfbBan.value, "key", MockDataProvider.validLocalBanDetails());
+            Future<RecordMetadata> send = producer.send(record);
             if(send.isDone())
                 System.out.println("Message Sent");
             System.out.println("Timestamp : " + send.get().timestamp());
